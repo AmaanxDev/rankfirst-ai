@@ -1,8 +1,9 @@
+import { Suspense } from 'react';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import Googlecard from '@/components/gsc';
 import BingConnectCard from '@/components/binge';
 
-export default async function SettingsPage({
+async function SettingsContent({
   searchParams,
 }: {
   searchParams: Promise<{ status?: string; error?: string }>;
@@ -10,9 +11,7 @@ export default async function SettingsPage({
   const { status, error } = await searchParams;
 
   return (
-    <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8 text-white">Settings & Integrations</h1>
-
+    <>
       {/* Success Banner for Google */}
       {status === 'gsc_connected' && (
         <div className="mb-6 p-4 bg-green-500/10 border border-green-500/50 rounded-lg flex items-center gap-3 text-green-400">
@@ -38,6 +37,21 @@ export default async function SettingsPage({
         <Googlecard status={status} />
         <BingConnectCard />
       </div>
+    </>
+  );
+}
+
+export default function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; error?: string }>;
+}) {
+  return (
+    <div className="max-w-5xl mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-8 text-white">Settings & Integrations</h1>
+      <Suspense fallback={<div className="text-gray-400">Loading settings...</div>}>
+        <SettingsContent searchParams={searchParams} />
+      </Suspense>
     </div>
   );
 }
